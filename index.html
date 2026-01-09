@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorando o Cosmos - Astronomia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
+
+        :root {
+            --space-bg: #020617;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--space-bg);
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Parallax Background */
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            z-index: -1;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 20px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        /* Sistema Solar Completo */
+        .solar-system {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scale(0.7);
+        }
+
+        .sun {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #fcd34d 0%, #f59e0b 50%, #b45309 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px #f59e0b;
+            z-index: 10;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: rotate linear infinite;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: -5px;
+            transform: translateY(-50%);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Floating Menu */
+        .floating-menu {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.15) translateX(-5px);
+            background: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .menu-btn span {
+            position: absolute;
+            right: 75px;
+            background: #1e293b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .menu-btn:hover span {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Glassmorphism Sections */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .fade-in-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-in-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Saturn Ring */
+        .saturn-ring {
+            position: absolute;
+            width: 30px;
+            height: 10px;
+            border: 2px solid rgba(194, 155, 107, 0.6);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="star-field" id="parallax-bg"></div>
+
+    <!-- Menu Flutuante -->
+    <nav class="floating-menu">
+        <a href="#about" class="menu-btn">
+            <span>Sobre Nós</span>
+            <i class="fas fa-info-circle"></i>
+        </a>
+        <a href="#news" class="menu-btn">
+            <span>Mural do Professor</span>
+            <i class="fas fa-chalkboard-teacher"></i>
+        </a>
+        <button onclick="toggleModal('submitModal')" class="menu-btn">
+            <span>Enviar Atividade</span>
+            <i class="fas fa-file-upload"></i>
+        </button>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <section class="min-h-screen flex flex-col items-center justify-center px-4 relative">
+        <div class="text-center z-20 mt-12 mb-8">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-blue-400 mb-4 tracking-tighter">
+                SISTEMA SOLAR
+            </h1>
+            <p class="text-lg text-blue-200 max-w-2xl mx-auto opacity-70">
+                Uma representação dinâmica do nosso vizinho espacial, explorada através da lente da ciência.
+            </p>
+        </div>
+
+        <!-- Sistema Solar Completo -->
+        <div class="solar-system">
+            <div class="sun"></div>
+            
+            <!-- Mercúrio (4s) -->
+            <div class="orbit" style="width: 140px; height: 140px; animation-duration: 4s;">
+                <div class="planet" style="width: 6px; height: 6px; background: #a5a5a5;"></div>
+            </div>
+            <!-- Vénus (7s) -->
+            <div class="orbit" style="width: 190px; height: 190px; animation-duration: 7s;">
+                <div class="planet" style="width: 10px; height: 10px; background: #e3bb76;"></div>
+            </div>
+            <!-- Terra (10s) -->
+            <div class="orbit" style="width: 250px; height: 250px; animation-duration: 10s;">
+                <div class="planet" style="width: 11px; height: 11px; background: #2271b3;"></div>
+            </div>
+            <!-- Marte (15s) -->
+            <div class="orbit" style="width: 310px; height: 310px; animation-duration: 15s;">
+                <div class="planet" style="width: 9px; height: 9px; background: #e27b58;"></div>
+            </div>
+            <!-- Júpiter (25s) -->
+            <div class="orbit" style="width: 420px; height: 420px; animation-duration: 25s;">
+                <div class="planet" style="width: 24px; height: 24px; background: #d39c7e;"></div>
+            </div>
+            <!-- Saturno (35s) -->
+            <div class="orbit" style="width: 530px; height: 530px; animation-duration: 35s;">
+                <div class="planet" style="width: 20px; height: 20px; background: #c29b6b;">
+                    <div class="saturn-ring"></div>
+                </div>
+            </div>
+            <!-- Urano (45s) -->
+            <div class="orbit" style="width: 620px; height: 620px; animation-duration: 45s;">
+                <div class="planet" style="width: 15px; height: 15px; background: #b0e0e6;"></div>
+            </div>
+            <!-- Neptuno (55s) -->
+            <div class="orbit" style="width: 700px; height: 700px; animation-duration: 55s;">
+                <div class="planet" style="width: 14px; height: 14px; background: #3f54ba;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mural do Professor (Notícias) -->
+    <section id="news" class="max-w-6xl mx-auto px-6 py-24">
+        <h2 class="text-4xl font-bold mb-12 text-center text-blue-300">Mural do Professor</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="fade-in-scroll glass-card p-6">
+                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Publicado hoje</span>
+                <h3 class="text-2xl font-bold mt-2 mb-4">Nova Descoberta em Marte</h3>
+                <p class="text-gray-400 mb-6">O rover Perseverance encontrou evidências intrigantes de sedimentos fluviais antigos que podem conter bioassinaturas...</p>
+                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2">Ler notícia completa <i class="fas fa-arrow-right text-sm"></i></a>
+            </div>
+            <div class="fade-in-scroll glass-card p-6">
+                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Ontem</span>
+                <h3 class="text-2xl font-bold mt-2 mb-4">Eclipse Lunar à Vista</h3>
+                <p class="text-gray-400 mb-6">Preparem os vossos telescópios! No próximo dia 15 teremos um eclipse total visível em toda a nossa região...</p>
+                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2">Ler guia de observação <i class="fas fa-arrow-right text-sm"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- James Webb Section -->
+    <section class="max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in-scroll">
+                <h2 class="text-4xl font-bold mb-6 text-blue-300">Telescópio James Webb</h2>
+                <div class="space-y-4 text-gray-300 leading-relaxed">
+                    <p>O Webb é o sucessor do Hubble, capaz de ver o início do tempo. Com sensores infravermelhos de última geração, ele revela o que antes era invisível.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Observação de exoplanetas</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Formação das primeiras galáxias</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Nascimento estelar em infravermelho</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="fade-in-scroll glass-card p-4 text-center">
+                <img src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=800" alt="Nebulosa captada pelo Webb" class="rounded-xl w-full h-64 object-cover opacity-80">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Sobre Nós -->
+    <section id="about" class="max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
+        <div class="glass-card p-12 text-center fade-in-scroll">
+            <h2 class="text-4xl font-bold mb-8 text-blue-300">Sobre Nós</h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-10">
+                Somos um grupo de educadores dedicados a partilhar as maravilhas do universo. Este portal serve como ponto de encontro entre o conhecimento científico e os nossos estudantes.
+            </p>
+        </div>
+    </section>
+
+    <!-- Modal: Submissão de Atividades (Estudantes) -->
+    <div id="submitModal" class="modal">
+        <div class="glass-card w-full max-w-lg p-8 m-4 relative border-blue-500/30">
+            <button onclick="toggleModal('submitModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+                <i class="fas fa-graduation-cap text-blue-400"></i>
+                Portal do Estudante
+            </h2>
+            <p class="text-sm text-gray-400 mb-6">Submete aqui o link para a tua atividade ou projeto.</p>
+            <form id="activityForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Nome Completo do Estudante</label>
+                    <input type="text" required class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Insere o teu nome">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Link do Trabalho (Drive, GitHub, etc)</label>
+                    <input type="url" required class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Observações</label>
+                    <textarea class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 h-20" placeholder="Opcional..."></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500 transition-all">
+                    Enviar Atividade
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="text-center py-12 border-t border-white/5 opacity-50">
+        <p>&copy; 2026 Observatório de Astronomia - Prof. Responsável</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-scroll').forEach(el => observer.observe(el));
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const bg = document.getElementById('parallax-bg');
+            if(bg) bg.style.transform = `translateY(${scrolled * 0.4}px)`;
+        });
+
+        // Toggle Modals
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if(modal) modal.classList.toggle('active');
+        }
+
+        // Student Form Submission Logic
+        const activityForm = document.getElementById('activityForm');
+        if(activityForm) {
+            activityForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = this.querySelector('button');
+                const original = btn.innerText;
+                
+                btn.innerText = 'Submetido!';
+                btn.className = 'w-full py-3 bg-green-600 rounded-lg font-bold';
+                
+                setTimeout(() => {
+                    toggleModal('submitModal');
+                    this.reset();
+                    btn.innerText = original;
+                    btn.className = 'w-full py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500';
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
