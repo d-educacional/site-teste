@@ -1,138 +1,264 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorando o Cosmos - Astronomia</title>
+    <title>Guia de Astronomia - Sistema Solar Interativo</title>
+    
+    <!-- Dependências da Animação do Sistema Solar -->
+    <link rel="stylesheet" href="https://nathanprinsley-files.prinsh.com/data-1/css/deface(16-01).css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
 
-        :root {
-            --space-bg: #020617;
-        }
-
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background-color: var(--space-bg);
+            background-color: #020617;
             color: white;
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
-            scroll-behavior: smooth;
         }
 
-        /* Parallax Background */
-        .star-field {
+        /* Título em destaque no topo */
+        .top-banner {
+            background: #020617;
+            padding: 40px 20px 20px 20px;
+            text-align: center;
+        }
+
+        .top-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #60a5fa, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin: 0;
+        }
+
+        #hero-solar-system {
+            position: relative;
+            height: 85vh;
+            width: 100%;
+            overflow: hidden;
+            background: #080b14;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navbar da animação (Menu Superior) */
+        #navbar {
+            top: 0 !important;
+            height: auto !important;
+            padding: 10px 0 !important;
+            background: rgba(15, 23, 42, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #data {
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: flex !important;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            background: transparent !important;
+            border: none !important;
+            padding: 5px !important;
+            width: 95% !important;
+            margin: 0 auto !important;
+        }
+
+        #data a {
+            position: relative !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 1px 12px !important;
+            border-radius: 15px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #cbd5e1 !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            transition: all 0.3s !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            height: auto !important;
+            line-height: 1 !important;
+        }
+
+        #data a:hover, #data a.active {
+            background: #3b82f6 !important;
+            color: white !important;
+            border-color: #60a5fa !important;
+        }
+
+        /* Menu de Controles Inferior */
+        #controls {
+            position: absolute !important;
+            bottom: 20px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
+            top: auto !important;
+            z-index: 100 !important;
+            padding: 8px 15px !important;
+            background: rgba(15, 23, 42, 0.85) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 25px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        #controls label {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 1px 12px !important;
+            border-radius: 15px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #cbd5e1 !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            transition: all 0.3s !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+        }
+
+        #controls label:hover {
+            background: rgba(255, 255, 255, 0.12) !important;
+            color: white !important;
+        }
+
+        #controls label:has(input:checked) {
+            background: #3b82f6 !important;
+            color: white !important;
+            border-color: #60a5fa !important;
+        }
+
+        /* Botão Flutuante de Atividades */
+        #btn-atividade {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: none;
+        }
+
+        #btn-atividade:hover {
+            transform: scale(1.1) rotate(-10deg);
+            background: #2563eb;
+        }
+
+        /* Modal customizado */
+        #modal-container {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
-            z-index: -1;
-            background-image: 
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
-                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 20px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Sistema Solar Completo */
-        .solar-system {
-            position: relative;
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+
+        .modal-content input {
             width: 100%;
-            height: 700px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform: scale(0.7);
-        }
-
-        .sun {
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, #fcd34d 0%, #f59e0b 50%, #b45309 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 50px #f59e0b;
-            z-index: 10;
-        }
-
-        .orbit {
-            position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 50%;
-            animation: rotate linear infinite;
-        }
-
-        .planet {
-            position: absolute;
-            border-radius: 50%;
-            top: 50%;
-            left: -5px;
-            transform: translateY(-50%);
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Floating Menu */
-        .floating-menu {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .menu-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            text-decoration: none;
+            outline: none;
         }
 
-        .menu-btn:hover {
-            transform: scale(1.15) translateX(-5px);
+        .modal-content input:focus {
+            border-color: #3b82f6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            flex: 2;
             background: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-        }
-
-        .menu-btn span {
-            position: absolute;
-            right: 75px;
-            background: #1e293b;
             color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-            white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .menu-btn:hover span {
-            opacity: 1;
-            visibility: visible;
+        .btn-cancel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
         }
 
-        /* Glassmorphism Sections */
+        /* Ocultar elementos padrão da biblioteca */
+        .set-view, .set-zoom, #controls input, #toggle-data, #toggle-controls {
+            display: none !important;
+        }
+
         .glass-card {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(12px);
@@ -151,232 +277,182 @@
             transform: translateY(0);
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        /* Saturn Ring */
-        .saturn-ring {
-            position: absolute;
-            width: 30px;
-            height: 10px;
-            border: 2px solid rgba(194, 155, 107, 0.6);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(75deg);
+        footer {
+            background: #010409;
         }
     </style>
 </head>
-<body>
 
-    <div class="star-field" id="parallax-bg"></div>
+<body class="opening hide-UI view-2D zoom-large data-close controls-close">
 
-    <!-- Menu Flutuante -->
-    <nav class="floating-menu">
-        <a href="#about" class="menu-btn">
-            <span>Sobre Nós</span>
-            <i class="fas fa-info-circle"></i>
-        </a>
-        <a href="#news" class="menu-btn">
-            <span>Mural do Professor</span>
-            <i class="fas fa-chalkboard-teacher"></i>
-        </a>
-        <button onclick="toggleModal('submitModal')" class="menu-btn">
-            <span>Enviar Atividade</span>
-            <i class="fas fa-file-upload"></i>
-        </button>
-    </nav>
-
-    <!-- Header / Hero Section -->
-    <section class="min-h-screen flex flex-col items-center justify-center px-4 relative">
-        <div class="text-center z-20 mt-12 mb-8">
-            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-blue-400 mb-4 tracking-tighter">
-                SISTEMA SOLAR
-            </h1>
-            <p class="text-lg text-blue-200 max-w-2xl mx-auto opacity-70">
-                Uma representação dinâmica do nosso vizinho espacial, explorada através da lente da ciência.
-            </p>
-        </div>
-
-        <!-- Sistema Solar Completo -->
-        <div class="solar-system">
-            <div class="sun"></div>
-            
-            <!-- Mercúrio (4s) -->
-            <div class="orbit" style="width: 140px; height: 140px; animation-duration: 4s;">
-                <div class="planet" style="width: 6px; height: 6px; background: #a5a5a5;"></div>
+    <!-- Modal de Envio -->
+    <div id="modal-container">
+        <div class="modal-content">
+            <h2>Enviar Atividade</h2>
+            <input type="text" id="aluno-nome" placeholder="Seu nome completo">
+            <input type="url" id="atividade-link" placeholder="Link do arquivo (Google Drive, Dropbox, etc)">
+            <div class="modal-buttons">
+                <button class="btn-submit" onclick="enviarAtividade()">Enviar</button>
+                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
             </div>
-            <!-- Vénus (7s) -->
-            <div class="orbit" style="width: 190px; height: 190px; animation-duration: 7s;">
-                <div class="planet" style="width: 10px; height: 10px; background: #e3bb76;"></div>
-            </div>
-            <!-- Terra (10s) -->
-            <div class="orbit" style="width: 250px; height: 250px; animation-duration: 10s;">
-                <div class="planet" style="width: 11px; height: 11px; background: #2271b3;"></div>
-            </div>
-            <!-- Marte (15s) -->
-            <div class="orbit" style="width: 310px; height: 310px; animation-duration: 15s;">
-                <div class="planet" style="width: 9px; height: 9px; background: #e27b58;"></div>
-            </div>
-            <!-- Júpiter (25s) -->
-            <div class="orbit" style="width: 420px; height: 420px; animation-duration: 25s;">
-                <div class="planet" style="width: 24px; height: 24px; background: #d39c7e;"></div>
-            </div>
-            <!-- Saturno (35s) -->
-            <div class="orbit" style="width: 530px; height: 530px; animation-duration: 35s;">
-                <div class="planet" style="width: 20px; height: 20px; background: #c29b6b;">
-                    <div class="saturn-ring"></div>
-                </div>
-            </div>
-            <!-- Urano (45s) -->
-            <div class="orbit" style="width: 620px; height: 620px; animation-duration: 45s;">
-                <div class="planet" style="width: 15px; height: 15px; background: #b0e0e6;"></div>
-            </div>
-            <!-- Neptuno (55s) -->
-            <div class="orbit" style="width: 700px; height: 700px; animation-duration: 55s;">
-                <div class="planet" style="width: 14px; height: 14px; background: #3f54ba;"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Mural do Professor (Notícias) -->
-    <section id="news" class="max-w-6xl mx-auto px-6 py-24">
-        <h2 class="text-4xl font-bold mb-12 text-center text-blue-300">Mural do Professor</h2>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="fade-in-scroll glass-card p-6">
-                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Publicado hoje</span>
-                <h3 class="text-2xl font-bold mt-2 mb-4">Nova Descoberta em Marte</h3>
-                <p class="text-gray-400 mb-6">O rover Perseverance encontrou evidências intrigantes de sedimentos fluviais antigos que podem conter bioassinaturas...</p>
-                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2">Ler notícia completa <i class="fas fa-arrow-right text-sm"></i></a>
-            </div>
-            <div class="fade-in-scroll glass-card p-6">
-                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Ontem</span>
-                <h3 class="text-2xl font-bold mt-2 mb-4">Eclipse Lunar à Vista</h3>
-                <p class="text-gray-400 mb-6">Preparem os vossos telescópios! No próximo dia 15 teremos um eclipse total visível em toda a nossa região...</p>
-                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2">Ler guia de observação <i class="fas fa-arrow-right text-sm"></i></a>
-            </div>
-        </div>
-    </section>
-
-    <!-- James Webb Section -->
-    <section class="max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div class="fade-in-scroll">
-                <h2 class="text-4xl font-bold mb-6 text-blue-300">Telescópio James Webb</h2>
-                <div class="space-y-4 text-gray-300 leading-relaxed">
-                    <p>O Webb é o sucessor do Hubble, capaz de ver o início do tempo. Com sensores infravermelhos de última geração, ele revela o que antes era invisível.</p>
-                    <ul class="space-y-2">
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Observação de exoplanetas</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Formação das primeiras galáxias</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Nascimento estelar em infravermelho</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="fade-in-scroll glass-card p-4 text-center">
-                <img src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=800" alt="Nebulosa captada pelo Webb" class="rounded-xl w-full h-64 object-cover opacity-80">
-            </div>
-        </div>
-    </section>
-
-    <!-- Section: Sobre Nós -->
-    <section id="about" class="max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
-        <div class="glass-card p-12 text-center fade-in-scroll">
-            <h2 class="text-4xl font-bold mb-8 text-blue-300">Sobre Nós</h2>
-            <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-10">
-                Somos um grupo de educadores dedicados a partilhar as maravilhas do universo. Este portal serve como ponto de encontro entre o conhecimento científico e os nossos estudantes.
-            </p>
-        </div>
-    </section>
-
-    <!-- Modal: Submissão de Atividades (Estudantes) -->
-    <div id="submitModal" class="modal">
-        <div class="glass-card w-full max-w-lg p-8 m-4 relative border-blue-500/30">
-            <button onclick="toggleModal('submitModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
-                <i class="fas fa-graduation-cap text-blue-400"></i>
-                Portal do Estudante
-            </h2>
-            <p class="text-sm text-gray-400 mb-6">Submete aqui o link para a tua atividade ou projeto.</p>
-            <form id="activityForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Nome Completo do Estudante</label>
-                    <input type="text" required class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Insere o teu nome">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Link do Trabalho (Drive, GitHub, etc)</label>
-                    <input type="url" required class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Observações</label>
-                    <textarea class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 h-20" placeholder="Opcional..."></textarea>
-                </div>
-                <button type="submit" class="w-full py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500 transition-all">
-                    Enviar Atividade
-                </button>
-            </form>
         </div>
     </div>
 
-    <footer class="text-center py-12 border-t border-white/5 opacity-50">
-        <p>&copy; 2026 Observatório de Astronomia - Prof. Responsável</p>
+    <!-- Botão Flutuante -->
+    <button id="btn-atividade" onclick="abrirModal()" title="Enviar Atividade">
+        <i class="fas fa-paper-plane"></i>
+    </button>
+
+    <!-- Cabeçalho Principal -->
+    <div class="top-banner">
+        <h1>Guia de Astronomia</h1>
+    </div>
+
+    <!-- SEÇÃO 1: SISTEMA SOLAR INTERATIVO -->
+    <section id="hero-solar-system">
+        <div id="navbar">
+            <div id="data">
+                <a class="sun" title="Sol" href="#sunspeed">Sol</a>
+                <a class="mercury" title="Mercúrio" href="#mercuryspeed">Mercúrio</a>
+                <a class="venus" title="Vênus" href="#venusspeed">Vênus</a>
+                <a class="earth active" title="Terra" href="#earthspeed">Terra</a>
+                <a class="mars" title="Marte" href="#marsspeed">Marte</a>
+                <a class="jupiter" title="Júpiter" href="#jupiterspeed">Júpiter</a>
+                <a class="saturn" title="Saturno" href="#saturnspeed">Saturno</a>
+                <a class="uranus" title="Urano" href="#uranusspeed">Urano</a>
+                <a class="neptune" title="Netuno" href="#neptunespeed">Netuno</a>
+            </div>
+        </div>
+
+        <div id="controls">
+            <label><input type="radio" class="set-speed" name="scale" checked><span>Velocidade</span></label>
+            <label><input type="radio" class="set-size" name="scale"><span>Tamanho</span></label>
+            <label><input type="radio" class="set-distance" name="scale"><span>Distância</span></label>
+        </div>
+
+        <div id="universe" class="scale-stretched">
+            <div id="galaxy">
+                <div id="solar-system" class="earth">
+                    <div id="mercury" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Mercúrio</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="venus" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Vênus</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="earth" class="orbit">
+                        <div class="pos">
+                            <div class="orbit"><div class="pos"><div class="moon"></div></div></div>
+                            <div class="planet"><dl class="infos"><dt>Terra</dt><dd><span></span></dd></dl></div>
+                        </div>
+                    </div>
+                    <div id="mars" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Marte</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="jupiter" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Júpiter</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="saturn" class="orbit"><div class="pos"><div class="planet"><div class="ring"></div><dl class="infos"><dt>Saturno</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="uranus" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Urano</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="neptune" class="orbit"><div class="pos"><div class="planet"><dl class="infos"><dt>Netuno</dt><dd><span></span></dd></dl></div></div></div>
+                    <div id="sun"><dl class="infos"><dt>Sol</dt><dd><span></span></dd></dl></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 2: MURAL DE NOTÍCIAS -->
+    <section id="mural" class="max-w-6xl mx-auto px-6 py-20">
+        <h2 class="text-3xl font-bold mb-12 text-center text-blue-300">Destaques da Astronomia</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="fade-in-scroll glass-card p-6 border-l-4 border-blue-500">
+                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Astrofísica</span>
+                <h3 class="text-xl font-bold mt-2 mb-4">Buracos Negros Supermassivos</h3>
+                <p class="text-gray-400 text-sm mb-6">Estudos recentes mostram como estes gigantes moldam a evolução de galáxias inteiras ao longo de bilhões de anos.</p>
+                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-bold">Explorar <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+            <div class="fade-in-scroll glass-card p-6 border-l-4 border-indigo-500">
+                <span class="text-xs text-indigo-400 font-bold uppercase tracking-widest">Exploração</span>
+                <h3 class="text-xl font-bold mt-2 mb-4">Missões em Marte</h3>
+                <p class="text-gray-400 text-sm mb-6">A busca por sinais de vida antiga continua com os rovers Perseverance e Curiosity no solo marciano.</p>
+                <a href="#" class="text-blue-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-bold">Explorar <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 3: JAMES WEBB -->
+    <section class="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in-scroll">
+                <h2 class="text-4xl font-bold mb-6 text-blue-300">James Webb</h2>
+                <p class="text-gray-300 leading-relaxed mb-6 text-lg">
+                    O sucessor do Hubble está a redefinir a nossa compreensão do cosmos, capturando imagens de galáxias formadas apenas algumas centenas de milhões de anos após o Big Bang.
+                </p>
+                <div class="glass-card p-6 bg-blue-900/10">
+                    <p class="text-sm text-gray-400 italic">"Estamos a ver o invisível."</p>
+                </div>
+            </div>
+            <div class="fade-in-scroll glass-card p-4">
+                <img src="https://scitechdaily.com/images/Webb-Wallpaper-scaled.jpg" class="rounded-xl w-full h-80 object-cover border border-white/10" alt="[Imagem do Telescópio James Webb]">
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 4: SOBRE NÓS -->
+    <section id="about" class="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
+        <div class="glass-card p-12 text-center fade-in-scroll">
+            <h2 class="text-3xl font-bold mb-6 text-blue-300">Sobre Nós</h2>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
+                Este projeto é um portal educativo dedicado à divulgação da astronomia e exploração espacial, desenvolvido para facilitar a aprendizagem visual do nosso sistema solar.
+            </p>
+            <div class="inline-block p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                <p class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-1">Institucional</p>
+                <p class="text-gray-400">Projeto acadêmico - Design Educacional UFMT</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 px-6 border-t border-white/5 text-center">
+        <p class="text-gray-600 text-[10px] uppercase tracking-[4px]">2026 • Astronomia Visual</p>
     </footer>
 
+    <!-- Scripts da Animação -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script src="https://nathanprinsley-files.prinsh.com/data-1/js/deface(16-02).js"></script>
+    
     <script>
-        // Intersection Observer for scroll animations
+        // Funções do Modal
+        function abrirModal() {
+            document.getElementById('modal-container').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-container').style.display = 'none';
+        }
+
+        function enviarAtividade() {
+            const nome = document.getElementById('aluno-nome').value;
+            const link = document.getElementById('atividade-link').value;
+
+            if (!nome || !link) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            // Simulação de envio
+            console.log("Atividade enviada:", { nome, link });
+            alert("Sucesso! Atividade de " + nome + " foi registrada.");
+            
+            // Limpa e fecha
+            document.getElementById('aluno-nome').value = "";
+            document.getElementById('atividade-link').value = "";
+            fecharModal();
+        }
+
+        // Animação de scroll suave
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
-
         document.querySelectorAll('.fade-in-scroll').forEach(el => observer.observe(el));
 
-        // Parallax Effect
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const bg = document.getElementById('parallax-bg');
-            if(bg) bg.style.transform = `translateY(${scrolled * 0.4}px)`;
+        // Forçar visibilidade do menu de planetas
+        $(window).load(function() {
+            $('#data').css({'display': 'flex', 'visibility': 'visible', 'opacity': '1'});
         });
-
-        // Toggle Modals
-        function toggleModal(id) {
-            const modal = document.getElementById(id);
-            if(modal) modal.classList.toggle('active');
-        }
-
-        // Student Form Submission Logic
-        const activityForm = document.getElementById('activityForm');
-        if(activityForm) {
-            activityForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const btn = this.querySelector('button');
-                const original = btn.innerText;
-                
-                btn.innerText = 'Submetido!';
-                btn.className = 'w-full py-3 bg-green-600 rounded-lg font-bold';
-                
-                setTimeout(() => {
-                    toggleModal('submitModal');
-                    this.reset();
-                    btn.innerText = original;
-                    btn.className = 'w-full py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500';
-                }, 1500);
-            });
-        }
     </script>
 </body>
 </html>
